@@ -66,6 +66,6 @@ trait HandlesMediaColumns
      */
     protected function mediaColumnNames(): array
     {
-        return $this->mediaColumns ?? [];
+        return $this->mediaColumns;
     }
 }

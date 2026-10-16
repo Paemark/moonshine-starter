@@ -17,10 +17,11 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @phpstan-use HasFactory<PostFactory>
+ * @use HasFactory<PostFactory>
  */
 class Post extends Model implements HasMedia
 {
+    /** @use HasFactory<PostFactory> */
     use HasFactory, SoftDeletes, LogsActivity, InteractsWithMedia, HandlesMediaColumns;
 
     /**

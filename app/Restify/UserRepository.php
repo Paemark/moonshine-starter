@@ -9,6 +9,7 @@ use Binaryk\LaravelRestify\Fields\BelongsToMany;
 use Binaryk\LaravelRestify\Fields\Boolean;
 use Binaryk\LaravelRestify\Fields\ID;
 use Binaryk\LaravelRestify\Fields\Text;
+use Binaryk\LaravelRestify\Fields\Field;
 use Binaryk\LaravelRestify\Http\Requests\RestifyRequest;
 use Binaryk\LaravelRestify\Repositories\Repository;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -32,20 +33,20 @@ class UserRepository extends Repository
     }
 
     /**
-     * @return array<int, \Binaryk\LaravelRestify\Fields\Field>
+     * @return array<int, Field|BelongsToMany>
      */
     public function fields(RestifyRequest $request): array
     {
         return [
-            ID::make(),
+            Field::make('id')->readonly(),
 
-            Text::make('Name', 'name')
+            Field::make('name')
                 ->rules('required', 'string', 'max:255'),
 
-            Text::make('Email', 'email')
+            Field::make('email')
                 ->rules('required', 'email', 'max:255'),
 
-            Boolean::make('Is Active', 'is_active')
+            Field::make('is_active')
                 ->rules('required', 'boolean'),
 
             BelongsToMany::make(

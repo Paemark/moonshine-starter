@@ -6,6 +6,7 @@ namespace App\Restify;
 
 use Binaryk\LaravelRestify\Fields\ID;
 use Binaryk\LaravelRestify\Fields\Text;
+use Binaryk\LaravelRestify\Fields\Field;
 use Binaryk\LaravelRestify\Http\Requests\RestifyRequest;
 use Binaryk\LaravelRestify\Repositories\Repository;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -30,17 +31,17 @@ class RoleRepository extends Repository
     }
 
     /**
-     * @return array<int, \Binaryk\LaravelRestify\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(RestifyRequest $request): array
     {
         return [
-            ID::make(),
-            Text::make('Name', 'name'),
-            Text::make('Guard Name', 'guard_name'),
+            Field::make('id')->readonly(),
+            Field::make('name'),
+            Field::make('guard_name'),
         ];
     }
-
+    
     public function allowToUpdate(
         RestifyRequest $request,
         mixed $payload = null

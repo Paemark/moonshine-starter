@@ -12,16 +12,19 @@ class UpdatePostRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $post = $this->route('post');
-        return $this->user()?->can('update', $post) ?? false;
+        return $this->user()?->can('update', $this->route('post')) ?? false;
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
-        $postId = $this->route('post')?->id;
+        $post = $this->route('post');
+
+        $postId = $post instanceof Post
+            ? $post->getKey()
+            : $post;
 
         return [
             'title' => ['required', 'string', 'max:255'],
@@ -34,7 +37,10 @@ class UpdatePostRequest extends FormRequest
             ],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string'],
-            'status' => ['required', Rule::in(['draft', 'pending', 'published'])],
+            'status' => [
+                'required',
+                Rule::in(['draft', 'pending', 'published']),
+            ],
             'published_at' => ['nullable', 'date'],
             'category_id' => ['required', 'exists:categories,id'],
             'user_id' => ['nullable', 'exists:users,id'],

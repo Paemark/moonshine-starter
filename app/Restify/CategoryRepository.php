@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Restify;
 
 use App\Models\Category;
-use Binaryk\LaravelRestify\Fields\ID;
-use Binaryk\LaravelRestify\Fields\Text;
-use Binaryk\LaravelRestify\Fields\Textarea;
+use Binaryk\LaravelRestify\Fields\Field;
 use Binaryk\LaravelRestify\Http\Requests\RestifyRequest;
 use Binaryk\LaravelRestify\Repositories\Repository;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -34,15 +32,15 @@ class CategoryRepository extends Repository
     }
 
     /**
-     * @return array<int, \Binaryk\LaravelRestify\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(RestifyRequest $request): array
     {
         return [
-            ID::make(),
-            Text::make('Name', 'name'),
-            Text::make('Slug', 'slug'),
-            Textarea::make('Description', 'description'),
+            Field::make('id')->readonly(),
+            Field::make('name'),
+            Field::make('slug'),
+            Field::make('description'),
         ];
     }
 

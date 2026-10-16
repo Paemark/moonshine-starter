@@ -19,10 +19,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @phpstan-use HasFactory<UserFactory>
+ * @use HasFactory<UserFactory>
  */
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory, HasApiTokens, Notifiable, SoftDeletes, HasRoles, LogsActivity, InteractsWithMedia, TwoFactorAuthenticatable, HandlesMediaColumns;
 
     /**

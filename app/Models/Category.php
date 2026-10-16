@@ -15,10 +15,11 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @phpstan-use HasFactory<CategoryFactory>
+ * @use HasFactory<CategoryFactory>
  */
 class Category extends Model implements HasMedia
 {
+    /** @use HasFactory<CategoryFactory> */
     use HasFactory, SoftDeletes, LogsActivity, InteractsWithMedia, HandlesMediaColumns;
 
     /**

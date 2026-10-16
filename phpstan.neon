@@ -9,8 +9,8 @@ parameters:
         - routes/
         - tests/
 
-    # 0 is the lowest, 9 is the highest. 6 is a good balance for enterprise.
+    # 0 is the lowest; 9 is the highest.
     level: 6
-    
-    # Treat PHPDoc types strictly
+
+    # Treat PHPDoc types strictly.
     treatPhpDocTypesAsCertain: true

@@ -16,7 +16,7 @@ class StorePostRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
@@ -31,7 +31,10 @@ class StorePostRequest extends FormRequest
             ],
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string'],
-            'status' => ['required', Rule::in(['draft', 'pending', 'published'])],
+            'status' => [
+                'required',
+                Rule::in(['draft', 'pending', 'published']),
+            ],
             'published_at' => ['nullable', 'date'],
             'category_id' => ['required', 'exists:categories,id'],
             'user_id' => ['nullable', 'exists:users,id'],

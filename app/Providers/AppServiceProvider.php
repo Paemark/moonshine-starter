@@ -19,6 +19,7 @@ use Laravel\Fortify\Fortify;
 use MoonShine\Contracts\Core\DependencyInjection\CoreContract;
 use Spatie\Permission\Models\Role;
 use App\Models\Post;
+use Illuminate\Contracts\View\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,28 +46,30 @@ class AppServiceProvider extends ServiceProvider
             DashboardPage::class,
         ]);
 
+        
         Fortify::loginView(
-            fn () => view('auth.login')
+            fn (): View => $this->renderFortifyView('auth.login')
         );
 
         Fortify::registerView(
-            fn () => view('auth.register')
+            fn (): View => $this->renderFortifyView('auth.register')
         );
 
         Fortify::requestPasswordResetLinkView(
-            fn () => view('auth.forgot-password')
+            fn (): View => $this->renderFortifyView('auth.forgot-password')
         );
 
         Fortify::resetPasswordView(
-            fn (Request $request) => view(
+            fn (Request $request): View => $this->renderFortifyView(
                 'auth.reset-password',
                 ['request' => $request]
             )
         );
 
         Fortify::verifyEmailView(
-            fn () => view('auth.verify-email')
+            fn (): View => $this->renderFortifyView('auth.verify-email')
         );
+
 
         RateLimiter::for('login', function (Request $request) {
             $username = strtolower(
@@ -94,4 +97,19 @@ class AppServiceProvider extends ServiceProvider
                 );
         });
     }
+
+    
+    /**
+     * Render a Fortify authentication view.
+     *
+     * @param array<string, mixed> $data
+     */
+    private function renderFortifyView(
+        string $name,
+        array $data = []
+    ): View {
+        /** @var view-string $name */
+        return view($name, $data);
+    }
+
 }
