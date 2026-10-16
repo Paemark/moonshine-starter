@@ -15,10 +15,11 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
-    use HasFactory, Notifiable, SoftDeletes, HasRoles, LogsActivity, InteractsWithMedia, TwoFactorAuthenticatable, HandlesMediaColumns;
+    use HasFactory, HasApiTokens, Notifiable, SoftDeletes, HasRoles, LogsActivity, InteractsWithMedia, TwoFactorAuthenticatable, HandlesMediaColumns;
 
     /**
      * Media collections exposed as pseudo-columns to MoonShine fields.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Post;
@@ -7,66 +9,54 @@ use App\Models\User;
 
 class PostPolicy
 {
-    public function viewAny(User $user): bool
+    public function allowRestify(?User $user = null): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('editor') || $user->hasRole('contributor');
+        return true;
     }
 
-    public function view(User $user, Post $post): bool
+    public function viewAny(?User $user = null): bool
     {
-        // Anyone can view published posts. Authors/Admins/Editors can view drafts.
-        if ($post->status === 'published') {
-            return true;
-        }
-        return $user->hasRole('admin') || 
-               ($user->hasRole('editor') && $post->user_id === $user->id) || 
-               ($user->hasRole('contributor') && $post->user_id === $user->id);
+        return true;
+    }
+
+    public function view(?User $user, Post $post): bool
+    {
+        return $post->status === 'published'
+            || ($user !== null && $user->hasRole('admin'));
+    }
+
+    public function show(?User $user, Post $post): bool
+    {
+        return $this->view($user, $post);
     }
 
     public function create(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('editor') || $user->hasRole('contributor');
+        return $user->hasAnyRole(['admin', 'editor', 'author']);
+    }
+
+    public function store(User $user): bool
+    {
+        return $this->create($user);
     }
 
     public function update(User $user, Post $post): bool
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
-        if ($user->hasRole('editor') && $post->user_id === $user->id) {
-            return true;
-        }
-
-        // Contributors can only edit their own UNPUBLISHED posts
-        if ($user->hasRole('contributor') && $post->user_id === $user->id && $post->status !== 'published') {
-            return true;
-        }
-
-        return false;
+        return $user->hasRole('admin')
+            || (
+                $user->hasAnyRole(['editor', 'author'])
+                && (int) $post->user_id === (int) $user->id
+            );
     }
 
     public function delete(User $user, Post $post): bool
     {
-        // Contributors CANNOT delete posts per repo.md requirements
-        if ($user->hasRole('contributor')) {
-            return false;
-        }
-
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
-        if ($user->hasRole('editor') && $post->user_id === $user->id) {
-            return true;
-        }
-
-        return false;
+        return $user->hasRole('admin');
     }
 
     public function restore(User $user, Post $post): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('editor');
+        return $user->hasRole('admin');
     }
 
     public function forceDelete(User $user, Post $post): bool

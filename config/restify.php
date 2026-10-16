@@ -1,19 +1,20 @@
 <?php
 
-return [
-    /*
-    |--------------------------------------------------------------------------
-    | Restify Base URI
-    |--------------------------------------------------------------------------
-    */
-    'base' => env('RESTIFY_PREFIX', 'api'),
+use Binaryk\LaravelRestify\Http\Middleware\AuthorizeRestify;
+use Binaryk\LaravelRestify\Http\Middleware\DispatchRestifyStartingEvent;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Restify Version
-    |--------------------------------------------------------------------------
-    */
-    'version' => env('RESTIFY_VERSION', 'v1'),
-    
-    // ... (keep the rest of the default generated config intact)
+return [
+
+    'base' => '/api/restify',
+
+    'middleware' => [
+        'api',
+        \Binaryk\LaravelRestify\Http\Middleware\DispatchRestifyStartingEvent::class,
+        \Binaryk\LaravelRestify\Http\Middleware\AuthorizeRestify::class,
+    ],
+
+
+    'auth' => [
+        'user_model' => App\Models\User::class,
+    ],
 ];
