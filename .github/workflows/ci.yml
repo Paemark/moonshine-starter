@@ -2,78 +2,92 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  contents: read
 
 jobs:
-  # Job 1: PHP Security & Static Analysis
   php-quality:
+    name: PHP security and static analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: "8.4"
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
-      - name: Install Composer Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Run Composer Audit (Dependency Security)
+      - name: Audit Composer dependencies
         run: composer audit
 
-      - name: Run Larastan (Static Analysis)
-        run: vendor/bin/phpstan analyse
+      - name: Run Larastan / PHPStan
+        run: vendor/bin/phpstan analyse --configuration=phpstan.neon.txt --no-progress
 
-  # Job 2: Frontend Security & Build
   frontend-quality:
+    name: Frontend security and build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: npm
 
-      - name: Install NPM Dependencies
+      - name: Install NPM dependencies
         run: npm ci
 
-      - name: Run NPM Audit (Dependency Security)
-        # --omit=dev prevents CI failure on dev-only vulnerabilities, 
-        # remove it if you want strict enforcement on dev dependencies too.
+      - name: Audit production NPM dependencies
         run: npm audit --omit=dev
 
-      - name: Build Frontend Assets
+      - name: Build frontend assets
         run: npm run build
 
-  # Job 3: Test Suite
   tests:
+    name: Laravel test suite
     runs-on: ubuntu-latest
     env:
+      APP_ENV: testing
+      APP_DEBUG: true
+      APP_KEY: base64:2fl+Ktvkfl+Fuz4Qp/A75G2RTiWVA/ZoKZvp6fiiM10=
       DB_CONNECTION: sqlite
       DB_DATABASE: ":memory:"
-      APP_KEY: base64:2fl+Ktvkfl+Fuz4Qp/A75G2RTiWVA/ZoKZvp6fiiM10=
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          php-version: "8.4"
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, fileinfo
           coverage: none
 
-      - name: Install Composer Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Generate App Key (Fallback if env fails)
-        run: php artisan key:generate
+      - name: Clear Laravel caches
+        run: |
+          php artisan config:clear
+          php artisan route:clear
+          php artisan view:clear
 
-      - name: Run Test Suite
+      - name: Run test suite
         run: php artisan test
