@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\Route;
+use Spatie\Csp\AddCspHeaders;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,10 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
-        then: function () {
-            // This route is registered directly in the bootstrap, bypassing web.php
-            Route::get('/direct-test', fn() => 'Direct route works');
-        },
     )
-    ->withMiddleware(function (Middleware $middleware) {})
-    ->withExceptions(function (Exceptions $exceptions) {})->create();
+    ->withMiddleware(function (Middleware $middleware) {
+        // Enforce CSP and related security headers on all web routes
+        $middleware->web(append: [
+            AddCspHeaders::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+    

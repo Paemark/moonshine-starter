@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
-use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,10 +12,11 @@ class StorePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     * Prevents unauthorized access before validation even runs.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create', \App\Models\Post::class);
+        return $this->user()?->can('create', Post::class) ?? false;
     }
 
     /**
@@ -23,24 +26,33 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:posts,slug'],
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                Rule::unique('posts', 'slug'),
+            ],
             'excerpt' => ['nullable', 'string', 'max:500'],
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string'], // Sanitized via Model Cast (Mews Purifier)
             'status' => ['required', Rule::in(['draft', 'pending', 'published'])],
+            'published_at' => ['nullable', 'date'],
             'category_id' => ['required', 'exists:categories,id'],
-            'featured_image' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:2048'], // 2MB max
+            // user_id is typically auto-assigned in the controller, but validated if present
+            'user_id' => ['nullable', 'exists:users,id'],
         ];
     }
 
     /**
-     * Prepare the data for validation.
+     * Get custom error messages for validator errors.
      */
-    protected function prepareForValidation(): void
+    public function messages(): array
     {
-        // If slug is not provided, we let the Model boot method handle it, 
-        // but we ensure it's null so the unique rule doesn't fail incorrectly.
-        if (empty($this->slug)) {
-            $this->merge(['slug' => null]);
-        }
+        return [
+            'slug.regex' => 'The slug must contain only lowercase letters, numbers, and hyphens.',
+            'slug.unique' => 'This slug is already in use.',
+            'status.in' => 'Invalid status selected.',
+            'category_id.exists' => 'The selected category does not exist.',
+        ];
     }
 }

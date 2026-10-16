@@ -1,0 +1,16 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+        - tests/
+
+    # 0 is the lowest, 9 is the highest. 6 is a good balance for enterprise.
+    level: 6
+    
+    # Treat PHPDoc types strictly
+    treatPhpDocTypesAsCertain: true
