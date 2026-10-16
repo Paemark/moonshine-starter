@@ -20,6 +20,7 @@ class CategoryRepository extends Repository
 
     public static string $uriKey = 'categories';
 
+    /** @var bool|array<string, mixed> */
     public static bool|array $public = true;
 
     public function allowRestify(RestifyRequest $request): bool
@@ -32,6 +33,9 @@ class CategoryRepository extends Repository
         return true;
     }
 
+    /**
+     * @return array<int, \Binaryk\LaravelRestify\Fields\Field>
+     */
     public function fields(RestifyRequest $request): array
     {
         return [
@@ -44,11 +48,11 @@ class CategoryRepository extends Repository
 
     public function allowToUpdate(
         RestifyRequest $request,
-        $payload = null
+        mixed $payload = null
     ): self {
         if (! $request->user()?->can(
             'update',
-            $payload ?? $this->model
+            $payload ?? static::$model
         )) {
             throw new AuthorizationException();
         }
@@ -58,11 +62,11 @@ class CategoryRepository extends Repository
 
     public function allowToDelete(
         RestifyRequest $request,
-        $payload = null
+        mixed $payload = null
     ): self {
         if (! $request->user()?->can(
             'delete',
-            $payload ?? $this->model
+            $payload ?? static::$model
         )) {
             throw new AuthorizationException();
         }
@@ -72,11 +76,11 @@ class CategoryRepository extends Repository
 
     public function allowToRestore(
         RestifyRequest $request,
-        $payload = null
+        mixed $payload = null
     ): self {
         if (! $request->user()?->can(
             'restore',
-            $payload ?? $this->model
+            $payload ?? static::$model
         )) {
             throw new AuthorizationException();
         }
@@ -86,11 +90,11 @@ class CategoryRepository extends Repository
 
     public function allowToForceDelete(
         RestifyRequest $request,
-        $payload = null
+        mixed $payload = null
     ): self {
         if (! $request->user()?->can(
             'forceDelete',
-            $payload ?? $this->model
+            $payload ?? static::$model
         )) {
             throw new AuthorizationException();
         }

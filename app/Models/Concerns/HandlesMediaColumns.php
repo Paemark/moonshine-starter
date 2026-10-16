@@ -11,12 +11,8 @@ use Illuminate\Http\UploadedFile;
  * Spatie Media Library instead of the database, and exposes the first media
  * URL when the pseudo-column is read.
  *
- * Each consuming model declares its pseudo-columns as a plain property:
+ * Each consuming model MUST declare its own $mediaColumns property:
  *   protected array $mediaColumns = ['thumbnails'];
- *
- * NOTE: this trait must NOT declare $mediaColumns itself — PHP treats a
- * trait/class property pair with differing defaults as an incompatible
- * composition and raises a fatal error.
  */
 trait HandlesMediaColumns
 {
@@ -45,7 +41,6 @@ trait HandlesMediaColumns
                 $this->pendingMedia[$key] = $value;
             }
 
-            // Never persist this key to a database column.
             return $this;
         }
 
@@ -67,12 +62,10 @@ trait HandlesMediaColumns
     }
 
     /**
-     * Reads the pseudo-column list declared on the consuming model.
-     *
      * @return list<string>
      */
     protected function mediaColumnNames(): array
     {
-        return property_exists($this, 'mediaColumns') ? $this->mediaColumns : [];
+        return $this->mediaColumns ?? [];
     }
 }

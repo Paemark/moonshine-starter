@@ -10,6 +10,9 @@ use App\MoonShine\Resources\Category\Pages\CategoryFormPage;
 use App\MoonShine\Resources\Category\Pages\CategoryIndexPage;
 use MoonShine\Laravel\Resources\ModelResource;
 
+/**
+ * @extends ModelResource<Category, CategoryIndexPage, CategoryFormPage, CategoryDetailPage>
+ */
 class CategoryResource extends ModelResource
 {
     protected string $model = Category::class;
@@ -18,7 +21,6 @@ class CategoryResource extends ModelResource
 
     protected string $uri = 'categories';
 
-    // Label used by BelongsTo / BelongsToMany option lists and async search
     protected string $column = 'name';
 
     protected bool $withSoftDeletes = true;

@@ -10,6 +10,9 @@ use App\MoonShine\Resources\User\Pages\UserFormPage;
 use App\MoonShine\Resources\User\Pages\UserIndexPage;
 use MoonShine\Laravel\Resources\ModelResource;
 
+/**
+ * @extends ModelResource<User, UserIndexPage, UserFormPage, UserDetailPage>
+ */
 class UserResource extends ModelResource
 {
     protected string $model = User::class;
@@ -18,7 +21,6 @@ class UserResource extends ModelResource
 
     protected string $uri = 'users';
 
-    // Label used by BelongsTo / BelongsToMany option lists and async search
     protected string $column = 'name';
 
     protected bool $withSoftDeletes = true;

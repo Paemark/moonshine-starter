@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Fortify\Fortify;
 use MoonShine\Contracts\Core\DependencyInjection\CoreContract;
 use Spatie\Permission\Models\Role;
 use App\Models\Post;
@@ -44,7 +45,29 @@ class AppServiceProvider extends ServiceProvider
             DashboardPage::class,
         ]);
 
-        // Fortify rate limiting (MoonShine uses Fortify's guard)
+        Fortify::loginView(
+            fn () => view('auth.login')
+        );
+
+        Fortify::registerView(
+            fn () => view('auth.register')
+        );
+
+        Fortify::requestPasswordResetLinkView(
+            fn () => view('auth.forgot-password')
+        );
+
+        Fortify::resetPasswordView(
+            fn (Request $request) => view(
+                'auth.reset-password',
+                ['request' => $request]
+            )
+        );
+
+        Fortify::verifyEmailView(
+            fn () => view('auth.verify-email')
+        );
+
         RateLimiter::for('login', function (Request $request) {
             $username = strtolower(
                 (string) $request->input(Fortify::username())

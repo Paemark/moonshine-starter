@@ -10,6 +10,9 @@ use App\MoonShine\Resources\Post\Pages\PostFormPage;
 use App\MoonShine\Resources\Post\Pages\PostIndexPage;
 use MoonShine\Laravel\Resources\ModelResource;
 
+/**
+ * @extends ModelResource<Post, PostIndexPage, PostFormPage, PostDetailPage>
+ */
 class PostResource extends ModelResource
 {
     protected string $model = Post::class;
@@ -18,7 +21,6 @@ class PostResource extends ModelResource
 
     protected string $uri = 'posts';
 
-    // Label used by BelongsTo / BelongsToMany option lists and async search
     protected string $column = 'title';
 
     protected bool $withSoftDeletes = true;

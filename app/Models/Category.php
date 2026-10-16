@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HandlesMediaColumns;
+use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,13 +14,14 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @phpstan-use HasFactory<CategoryFactory>
+ */
 class Category extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, LogsActivity, InteractsWithMedia, HandlesMediaColumns;
 
     /**
-     * Media collections exposed as pseudo-columns to MoonShine fields.
-     *
      * @var list<string>
      */
     protected array $mediaColumns = ['thumbnails'];
@@ -66,6 +68,9 @@ class Category extends Model implements HasMedia
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
     }
 
+    /**
+     * @return HasMany<Post, $this>
+     */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);

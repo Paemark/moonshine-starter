@@ -6,12 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // Only create the table if it doesn't already exist
         if (!Schema::hasTable('posts')) {
             Schema::create('posts', function (Blueprint $table) {
                 $table->id();
@@ -24,13 +20,11 @@ return new class extends Migration
                 
                 $table->foreignId('category_id')
                     ->constrained('categories')
-                    ->cascadeOnDelete()
-                    ->index();
+                    ->cascadeOnDelete();
                 
                 $table->foreignId('user_id')
                     ->constrained('users')
-                    ->cascadeOnDelete()
-                    ->index();
+                    ->cascadeOnDelete();
                 
                 $table->timestamps();
                 $table->softDeletes();
@@ -42,9 +36,6 @@ return new class extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('posts');

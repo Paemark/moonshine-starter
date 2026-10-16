@@ -19,8 +19,12 @@ class PostRepository extends Repository
 
     public static array $with = ['user', 'category'];
 
+    /** @var bool|array<string, mixed> */
     public static bool|array $public = true;
 
+    /**
+     * @return array<int, \Binaryk\LaravelRestify\Fields\Field>
+     */
     public function fields(RestifyRequest $request): array
     {
         return [

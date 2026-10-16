@@ -3,27 +3,29 @@
 namespace App\Models;
 
 use App\Models\Concerns\HandlesMediaColumns;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 use Laravolt\Avatar\Facade as Avatar;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
-use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @phpstan-use HasFactory<UserFactory>
+ */
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     use HasFactory, HasApiTokens, Notifiable, SoftDeletes, HasRoles, LogsActivity, InteractsWithMedia, TwoFactorAuthenticatable, HandlesMediaColumns;
 
     /**
-     * Media collections exposed as pseudo-columns to MoonShine fields.
-     *
      * @var list<string>
      */
     protected array $mediaColumns = ['avatars'];

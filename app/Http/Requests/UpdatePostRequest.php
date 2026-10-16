@@ -10,20 +10,14 @@ use Illuminate\Validation\Rule;
 
 class UpdatePostRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     * CRITICAL: Prevents IDOR by checking authorization against the specific route model.
-     */
     public function authorize(): bool
     {
-        // Assumes route model binding is used (e.g., /posts/{post})
         $post = $this->route('post');
-        
         return $this->user()?->can('update', $post) ?? false;
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
@@ -48,7 +42,7 @@ class UpdatePostRequest extends FormRequest
     }
 
     /**
-     * Get custom error messages for validator errors.
+     * @return array<string, string>
      */
     public function messages(): array
     {

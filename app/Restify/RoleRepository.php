@@ -29,6 +29,9 @@ class RoleRepository extends Repository
         return $request->user()?->hasRole('admin') ?? false;
     }
 
+    /**
+     * @return array<int, \Binaryk\LaravelRestify\Fields\Field>
+     */
     public function fields(RestifyRequest $request): array
     {
         return [
@@ -40,7 +43,7 @@ class RoleRepository extends Repository
 
     public function allowToUpdate(
         RestifyRequest $request,
-        $payload = null
+        mixed $payload = null
     ): self {
         if (! $request->user()?->hasRole('admin')) {
             throw new AuthorizationException(
@@ -53,7 +56,7 @@ class RoleRepository extends Repository
 
     public function allowToDelete(
         RestifyRequest $request,
-        $payload = null
+        mixed $payload = null
     ): self {
         throw new AuthorizationException(
             'Roles cannot be deleted through the API.'

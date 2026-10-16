@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Concerns\HandlesMediaColumns;
+use Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,13 +16,14 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @phpstan-use HasFactory<PostFactory>
+ */
 class Post extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, LogsActivity, InteractsWithMedia, HandlesMediaColumns;
 
     /**
-     * Media collections exposed as pseudo-columns to MoonShine fields.
-     *
      * @var list<string>
      */
     protected array $mediaColumns = ['featured_images'];
@@ -47,11 +50,11 @@ class Post extends Model implements HasMedia
     }
 
     /**
-     * SECURITY: sanitize rich text before database insertion (XSS prevention).
+     * @return Attribute<string, string>
      */
-    protected function content(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function content(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+        return Attribute::make(
             set: fn (string $value) => Purifier::clean($value),
         );
     }
@@ -83,11 +86,17 @@ class Post extends Model implements HasMedia
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
