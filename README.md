@@ -84,6 +84,8 @@ php artisan serve
 ```
 
 The application will be available at `http://127.0.0.1:8000`. The admin panel is located at `http://127.0.0.1:8000/admin`.
+        - Username: admin@example.com
+        - Password: password
 
 ## Architecture & Conventions
 
@@ -168,18 +170,6 @@ The project uses GitHub Actions (`.github/workflows/ci.yml`) to enforce:
 - `composer audit` and `npm audit` for dependency security.
 - Larastan static analysis.
 - The full PHPUnit test suite.
-
-## Security Policy
-
-We take security vulnerabilities seriously and appreciate responsible disclosure.
-
-To report a security issue, email **security@example.co.ke** with the following details:
-
-- A description of the vulnerability.
-- Steps to reproduce the issue.
-- The potential impact of the vulnerability.
-
-Please do not open a public GitHub issue for security vulnerabilities. We will acknowledge reports within 48 hours and provide an estimated timeline for a fix.
 
 ## License
 
